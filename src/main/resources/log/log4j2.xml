@@ -8,7 +8,7 @@ http://logging.apache.org/log4j/2.x/manual/layouts.html
 	%p : Level of the event
 	%t : Thread that produced the logging-event
  -->
-<configuration status="warn" name="Common" packages="at.rovo.crawler">
+<configuration status="warn" name="Common" packages="at.rovo.common">
 
   <properties>
     <property name="commonFile">log/Common.log</property>
@@ -41,11 +41,11 @@ http://logging.apache.org/log4j/2.x/manual/layouts.html
   </appenders>
   
   <loggers>
-	<logger name="at.rovo.UrlReader" level="info" additivity="false">
+	<logger name="at.rovo.common.UrlReader" level="info" additivity="false">
 	  <appender-ref ref="CommonFile"/>
 	</logger>
 	
-	<logger name="at.rovo" level="info" additivity="true">
+	<logger name="at.rovo.common" level="info" additivity="true">
   	  <appender-ref ref="Console"/>
   	</logger>
   	
