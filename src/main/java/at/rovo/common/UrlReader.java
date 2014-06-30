@@ -68,8 +68,7 @@ public class UrlReader
 	 */
 	public BufferedReader read(String url) throws IOException, IllegalArgumentException
 	{
-		if (!url.startsWith("http://"))
-			throw new IllegalArgumentException("No URL provided!");
+		this.checkURL(url);
 		
 		// used an approach presented by tim_yates at stackoverflow.com
 		// (http://stackoverflow.com/questions/7055957/httpurlconnection-to-get-title-of-the-content-and-got-moved-permanently)
@@ -123,8 +122,7 @@ public class UrlReader
 	 */
 	public String readPage(String url) throws IllegalArgumentException
 	{
-		if (!url.startsWith("http://"))
-			throw new IllegalArgumentException("No URL provided!");
+		this.checkURL(url);
 		
 		StringBuffer buffer = new StringBuffer();
 		try
@@ -149,10 +147,15 @@ public class UrlReader
 		catch(IOException ioEx)
 		{
 			logger.warn("Could not read {}! Reason: {}", url, ioEx.getLocalizedMessage());
-			logger.catching(ioEx);
 			return null;
 		}
 		return buffer.toString();
+	}
+
+	private void checkURL(String url)
+	{
+		if (!url.startsWith("http://") && !url.startsWith("https://"))
+			throw new IllegalArgumentException("No valid URL provided! Found "+url);
 	}
 	
 	/**
