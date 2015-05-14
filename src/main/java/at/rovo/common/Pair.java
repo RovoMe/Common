@@ -1,15 +1,14 @@
 package at.rovo.common;
 
 /**
- * <p>
- * Defines a simple pair class that stores two elements and provides access to
- * both of them via according getter- and setter-methods.
- * </p>
- * 
+ * Defines a simple pair class that stores two elements and provides access to both of them via according getter- and
+ * setter-methods.
+ *
  * @param <A>
- *            The type of the first element
+ * 		The type of the first element
  * @param <B>
- *            The type of the second element
+ * 		The type of the second element
+ *
  * @author Roman Vottner
  */
 public class Pair<A, B>
@@ -26,11 +25,8 @@ public class Pair<A, B>
 	}
 
 	/**
-	 * <p>
-	 * Creates a new instance of this class and sets the first element as a, and
-	 * the second element as b
-	 * </p>
-	 * 
+	 * Creates a new instance of this class and sets the first element as a, and the second element as b
+	 *
 	 * @param a
 	 * @param b
 	 */
@@ -41,10 +37,8 @@ public class Pair<A, B>
 	}
 
 	/**
-	 * <p>
 	 * Returns the first element of this pair
-	 * </p>
-	 * 
+	 *
 	 * @return The first element of this pair
 	 */
 	public A getFirst()
@@ -53,10 +47,8 @@ public class Pair<A, B>
 	}
 
 	/**
-	 * <p>
 	 * Returns the last element of this pair
-	 * </p>
-	 * 
+	 *
 	 * @return The last element of this pair
 	 */
 	public B getLast()
@@ -65,12 +57,10 @@ public class Pair<A, B>
 	}
 
 	/**
-	 * <p>
 	 * Sets the first element of this pair
-	 * </p>
-	 * 
+	 *
 	 * @param a
-	 *            The first element of this pair
+	 * 		The first element of this pair
 	 */
 	public void setFirst(A a)
 	{
@@ -78,12 +68,10 @@ public class Pair<A, B>
 	}
 
 	/**
-	 * <p>
 	 * Sets the last element of this pair
-	 * </p>
-	 * 
+	 *
 	 * @param b
-	 *            The last element of this pair
+	 * 		The last element of this pair
 	 */
 	public void setLast(B b)
 	{

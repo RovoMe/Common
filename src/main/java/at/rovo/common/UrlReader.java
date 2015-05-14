@@ -1,25 +1,23 @@
 package at.rovo.common;
 
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.IOException;
-import java.net.URL;
-import java.net.HttpURLConnection;
-import java.nio.charset.StandardCharsets;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Scanner;
+
 /**
- * <em>UrlReader</em> reads a HTML pages based on the URL of this page provided
- * as string and loads the content into a BufferedReader if
- * {@link #read(String)} is invoked or directly in a string containing all the
- * page's content using {@link #readPage(String)}.
- * <p/>
- * Some pages require cookies to be set to present their content or even
- * redirect to further pages. <em>UrlReader</em> is capable of reading those
- * pages too.
- * 
+ * <em>UrlReader</em> reads a HTML pages based on the URL of this page provided as string and loads the content into a
+ * BufferedReader if {@link #read(String)} is invoked or directly in a string containing all the page's content using
+ * {@link #readPage(String)}.
+ * <p>
+ * Some pages require cookies to be set to present their content or even redirect to further pages. <em>UrlReader</em>
+ * is capable of reading those pages too.
+ *
  * @author Roman Vottner
  */
 public class UrlReader 
@@ -44,37 +42,34 @@ public class UrlReader
 	}
 
 	/**
-	 * Creates a new instance of this class and specifies to either include
-	 * line breaks in the output if <em>includeLineBreaks</em> is set to true
-	 * or to omit them if this argument is set to false.
+	 * Creates a new instance of this class and specifies to either include line breaks in the output if
+	 * <em>includeLineBreaks</em> is set to true or to omit them if this argument is set to false.
 	 *
 	 * @param includeLineBreaks
-	 *            If set to true specifies to include line breaks within the
-	 *            output, otherwise line breaks will be omitted
+	 * 		If set to true specifies to include line breaks within the output, otherwise line breaks will be omitted
 	 */
 	public UrlReader(boolean includeLineBreaks)
 	{
 		this.includeLineBreaks = includeLineBreaks;
 	}
-	
+
 	/**
-	 * Reads the content of a web document by downloading the content of the
-	 * specified page.
-	 * <p/>
-	 * If any redirects are necessary, this method will follow these to read the
-	 * content of the page.
-	 * 
+	 * Reads the content of a web document by downloading the content of the specified page.
+	 * <p>
+	 * If any redirects are necessary, this method will follow these to read the content of the page.
+	 *
 	 * @param url
-	 *            The URL of the HTML page to load
-	 * @return The content of the HTML page the URL was referring too (after any
-	 *         redirects) contained in a BufferedReader object
+	 * 		The URL of the HTML page to load
+	 *
+	 * @return The content of the HTML page the URL was referring too (after any redirects) contained in a
+	 * BufferedReader object
+	 *
 	 * @throws IOException
-	 *             If an exception during loading the content of the page is
-	 *             thrown
+	 * 		If an exception during loading the content of the page is thrown
 	 * @throws IllegalArgumentException
-	 *             If no valid URL is provided
+	 * 		If no valid URL is provided
 	 */
-	public BufferedReader read(String url) throws IOException, IllegalArgumentException
+	public Scanner read(String url) throws IOException, IllegalArgumentException
 	{
 		this.checkURL(url);
 		
@@ -92,43 +87,46 @@ public class UrlReader
 				
 			// If we got a cookie last time round, then add it to our request
 			if (cookie != null)
+			{
 				httpConn.setRequestProperty("Cookie", cookie);
-				
+			}
+
 			httpConn.connect();
 				
 			// Get the response code, and the location to jump to (in case of a redirect)
 //			int responseCode = httpConn.getResponseCode();
 			url = httpConn.getHeaderField("Location");
 			if (url != null)
+			{
 				this.realURL = url;
+			}
 			
 			// Try and get a cookie the site will set, we will pass this next time round
 			cookie = httpConn.getHeaderField("Set-Cookie");
 
-			// TODO: respect pages encoding-settings
+			// TODO: respect page encoding-settings
 			reader = new InputStreamReader(httpConn.getInputStream(), StandardCharsets.UTF_8);
-//			reader = new InputStreamReader(new URL(url).openStream(), "8859_1");
 		}
 		if (reader == null)
 		{
 			throw new IOException("Could not read input source");
 		}
-		return new BufferedReader(reader);
+		return new Scanner(reader);
 	}
-	
+
 	/**
-	 * Reads the content of a web document by downloading the content of the
-	 * specified page.
-	 * <p/>
-	 * If any redirects are necessary, this method will follow these to read the
-	 * content of the page.
-	 * 
+	 * Reads the content of a web document by downloading the content of the specified page.
+	 * <p>
+	 * If any redirects are necessary, this method will follow these to read the content of the page.
+	 *
 	 * @param url
-	 *            The URL of the HTML page to load
-	 * @return The content of the HTML page the URL was referring too (after any
-	 *         redirects) contained in a single String object
+	 * 		The URL of the HTML page to load
+	 *
+	 * @return The content of the HTML page the URL was referring too (after any redirects) contained in a single String
+	 * object
+	 *
 	 * @throws IllegalArgumentException
-	 *             If no valid URL is provided
+	 * 		If no valid URL is provided
 	 */
 	public String readPage(String url) throws IllegalArgumentException
 	{
@@ -137,17 +135,24 @@ public class UrlReader
 		StringBuilder buffer = new StringBuilder();
 		try
 		{
-			BufferedReader reader = read(url);
-			String line = reader.readLine();
-			while (line != null)
+			Scanner scanner = read(url);
+			while (scanner.hasNextLine())
 			{
+				String line = scanner.nextLine();
+
 				String curHTML = buffer.toString();
 				if (curHTML.endsWith(" ") && !line.startsWith(" "))
+				{
 					buffer.append(line);
+				}
 				else if (curHTML.endsWith(" ") && line.startsWith(" "))
+				{
 					buffer.append(line.trim());
+				}
 				else if (!curHTML.endsWith(" ") && line.startsWith(" "))
+				{
 					buffer.append(line);
+				}
 				else if (!line.trim().equals(""))
 				{
 					buffer.append(" ");
@@ -158,7 +163,6 @@ public class UrlReader
 				{
 					buffer.append("\n");
 				}
-				line = reader.readLine();
 			}
 		}
 		catch(IOException ioEx)
@@ -172,7 +176,9 @@ public class UrlReader
 	private void checkURL(String url)
 	{
 		if (!url.startsWith("http://") && !url.startsWith("https://"))
-			throw new IllegalArgumentException("No valid URL provided! Found "+url);
+		{
+			throw new IllegalArgumentException("No valid URL provided! Found " + url);
+		}
 	}
 	
 	/**
@@ -184,43 +190,39 @@ public class UrlReader
 	{
 		return this.originURL;
 	}
-	
+
 	/**
-	 * <p>Returns the URL of a downloaded page after any redirect occurred.</p>
-	 * 
+	 * Returns the URL of a downloaded page after any redirect occurred.
+	 *
 	 * @return The real URL of the document
 	 */
 	public String getRealURL()
 	{
 		return this.realURL;
 	}
-	
+
 	/**
-	 * An entrance point to downloading pages which uses a URL specified as
-	 * parameter and prints its content to the specified log4j2 log file.
-	 * <p/>
-	 * The page to download should be provided as the first argument. Any other
-	 * arguments will be ignored.
-	 * 
+	 * An entrance point to downloading pages which uses a URL specified as parameter and prints its content to the
+	 * specified log4j2 log file.
+	 * <p>
+	 * The page to download should be provided as the first argument. Any other arguments will be ignored.
+	 *
 	 * @param args
-	 *            The arguments passed to UrlReader - only the first is used
-	 *            which should be the URL of the page to read
+	 * 		The arguments passed to UrlReader - only the first is used which should be the URL of the page to read
+	 *
 	 * @throws IOException
-	 *             If any exception during downloading and reading the page
-	 *             occurred.
+	 * 		If any exception during downloading and reading the page occurred.
 	 */
 	public static void main(String[] args) throws IOException
 	{		
 		UrlReader reader = new UrlReader();
 		String url = args[0];
-		BufferedReader br = reader.read(url);
+		Scanner scanner = reader.read(url);
 		LOG.debug("Reading origin url: {}", reader.getOriginURL());
 		LOG.debug("Reading real url: {}", reader.getRealURL());
-		String line = br.readLine();
-		while (line != null)
+		while (scanner.hasNextLine())
 		{
-			LOG.debug(line);
-			line = br.readLine();
+			LOG.debug(scanner.nextLine());
 		}
 	}
 }
