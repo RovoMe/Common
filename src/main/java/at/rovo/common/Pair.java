@@ -5,76 +5,76 @@ package at.rovo.common;
  * setter-methods.
  *
  * @param <A>
- * 		The type of the first element
+ *         The type of the first element
  * @param <B>
- * 		The type of the second element
+ *         The type of the second element
  *
  * @author Roman Vottner
  */
 public class Pair<A, B>
 {
-	private A a = null;
-	private B b = null;
+    private A a = null;
+    private B b = null;
 
-	/**
-	 * Default Constructor
-	 */
-	public Pair()
-	{
+    /**
+     * Default Constructor
+     */
+    public Pair()
+    {
 
-	}
+    }
 
-	/**
-	 * Creates a new instance of this class and sets the first element as a, and the second element as b
-	 *
-	 * @param a
-	 * @param b
-	 */
-	public Pair(A a, B b)
-	{
-		this.a = a;
-		this.b = b;
-	}
+    /**
+     * Creates a new instance of this class and sets the first element as a, and the second element as b
+     *
+     * @param a
+     * @param b
+     */
+    public Pair(A a, B b)
+    {
+        this.a = a;
+        this.b = b;
+    }
 
-	/**
-	 * Returns the first element of this pair
-	 *
-	 * @return The first element of this pair
-	 */
-	public A getFirst()
-	{
-		return a;
-	}
+    /**
+     * Returns the first element of this pair
+     *
+     * @return The first element of this pair
+     */
+    public A getFirst()
+    {
+        return a;
+    }
 
-	/**
-	 * Returns the last element of this pair
-	 *
-	 * @return The last element of this pair
-	 */
-	public B getLast()
-	{
-		return b;
-	}
+    /**
+     * Returns the last element of this pair
+     *
+     * @return The last element of this pair
+     */
+    public B getLast()
+    {
+        return b;
+    }
 
-	/**
-	 * Sets the first element of this pair
-	 *
-	 * @param a
-	 * 		The first element of this pair
-	 */
-	public void setFirst(A a)
-	{
-		this.a = a;
-	}
+    /**
+     * Sets the first element of this pair
+     *
+     * @param a
+     *         The first element of this pair
+     */
+    public void setFirst(A a)
+    {
+        this.a = a;
+    }
 
-	/**
-	 * Sets the last element of this pair
-	 *
-	 * @param b
-	 * 		The last element of this pair
-	 */
-	public void setLast(B b)
-	{
-		this.b = b;
-	}
+    /**
+     * Sets the last element of this pair
+     *
+     * @param b
+     *         The last element of this pair
+     */
+    public void setLast(B b)
+    {
+        this.b = b;
+    }
 }
