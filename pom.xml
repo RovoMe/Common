@@ -29,6 +29,12 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- Wildcard pattern suite -->
+        <dependency>
+            <groupId>com.googlecode.junit-toolbox</groupId>
+            <artifactId>junit-toolbox</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
