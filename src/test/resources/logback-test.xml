@@ -25,7 +25,6 @@
 
     <logger name="at.rovo.common" level="info" />
     <logger name="at.rovo.common.UrlReader" level="debug" />
-    <logger name="org.apache.http" level="trace" />
 
     <root level="info" additivity="false">
         <appender-ref ref="STDOUT"/>
