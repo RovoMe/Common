@@ -4,10 +4,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <em>UrlReader</em> reads a HTML pages based on the URL of this page provided as string and loads the content into a
@@ -23,9 +26,9 @@ import org.apache.logging.log4j.Logger;
 public class UrlReader
 {
     /** The logger of this class */
-    private static Logger LOG = LogManager.getLogger(UrlReader.class.getName());
+    private static Logger LOG = LoggerFactory.getLogger(UrlReader.class.getName());
     /** The cookie received from a visited page */
-    private String cookie = null;
+    private List<Cookie> cookies = new ArrayList<>();
     /** The original URL of a page */
     private String originURL = null;
     /** The URL after a redirect */
@@ -80,32 +83,87 @@ public class UrlReader
         InputStreamReader reader = null;
         this.originURL = url;
         this.realURL = url;
-        while (url != null)
+        int responseCode = 500;
+        while (responseCode != 200 && url != null)
         {
             httpConn = (HttpURLConnection) new URL(url).openConnection();
             httpConn.setInstanceFollowRedirects(false);
 
             // If we got a cookie last time round, then add it to our request
-            if (cookie != null)
+            if (!cookies.isEmpty())
             {
-                httpConn.setRequestProperty("Cookie", cookie);
+                StringBuilder cookieString = new StringBuilder();
+                for (Cookie cookie : cookies)
+                {
+                    for (String key : cookie.getCustomValues().keySet())
+                    {
+                        if (cookieString.toString().contains(key))
+                        {
+                            continue;
+                        }
+                        String value = cookie.getCustomValues().get(key);
+                        if (null != value && !"".equals(value))
+                        {
+                            if (cookieString.length() > 0)
+                            {
+                                cookieString.append("; ");
+                            }
+                            cookieString.append(key).append("=").append(value);
+                        }
+                    }
+                }
+                LOG.trace("Adding cookie to request: {}", cookieString);
+                httpConn.addRequestProperty("Cookie", cookieString.toString());
             }
 
+            httpConn.setUseCaches(true);
             httpConn.connect();
 
+            responseCode = httpConn.getResponseCode();
             // Get the response code, and the location to jump to (in case of a redirect)
             //			int responseCode = httpConn.getResponseCode();
-            url = httpConn.getHeaderField("Location");
-            if (url != null)
+            String location = httpConn.getHeaderField("Location");
+            if (location != null)
             {
-                this.realURL = url;
+                this.realURL = location;
             }
+            LOG.trace("Invoking {} resulted in a '{} {}' response code. Location URL: {}", url, responseCode,
+                      httpConn.getResponseMessage(), location);
 
             // Try and get a cookie the site will set, we will pass this next time round
-            cookie = httpConn.getHeaderField("Set-Cookie");
+            // cookie = handleCookie(cookie, httpConn.getHeaderField("Set-Cookie"));
+            List<String> cookieStrings = httpConn.getHeaderFields().get("Set-Cookie");
+            for (String cookieString : cookieStrings)
+            {
+                if (cookieString != null && !"".equals(cookieString))
+                {
+                    cookies.add(new Cookie(cookieString));
+                }
+            }
 
-            // TODO: respect page encoding-settings
-            reader = new InputStreamReader(httpConn.getInputStream(), StandardCharsets.UTF_8);
+            if (null != reader)
+            {
+                reader.close();
+            }
+
+            Charset charset = StandardCharsets.UTF_8;
+            String contentType = httpConn.getHeaderField("Content-Type");
+            if (null != contentType && contentType.toLowerCase().contains("charset"))
+            {
+                String[] segments = contentType.toLowerCase().split(";");
+                for (String segment : segments)
+                {
+                    if (segment.contains("charset"))
+                    {
+                        String[] kv = segment.split("=");
+                        LOG.trace("Using charset {} for content received from {}", kv[1], url);
+                        charset = Charset.forName(kv[1]);
+                        break;
+                    }
+                }
+            }
+            reader = new InputStreamReader(httpConn.getInputStream(), charset);
+            url = location;
         }
         if (reader == null)
         {

@@ -1,11 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>Common</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-
-    <name>Common</name>
-    <description>Common classes and functions used by multiple frameworks</description>
 
     <parent>
         <groupId>at.rovo</groupId>
@@ -13,15 +8,33 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
+    <artifactId>commons</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <name>Commons</name>
+    <description>Common classes and functions used by multiple frameworks</description>
+
     <dependencies>
-        <!-- Log4J -->
+        <!-- Logging -->
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.3</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.25</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
+            <version>1.7.25</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>1.7.25</version>
         </dependency>
         <!-- JUnit -->
         <dependency>
