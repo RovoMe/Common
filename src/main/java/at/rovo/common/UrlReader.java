@@ -133,11 +133,14 @@ public class UrlReader
             // Try and get a cookie the site will set, we will pass this next time round
             // cookie = handleCookie(cookie, httpConn.getHeaderField("Set-Cookie"));
             List<String> cookieStrings = httpConn.getHeaderFields().get("Set-Cookie");
-            for (String cookieString : cookieStrings)
+            if (null != cookieStrings)
             {
-                if (cookieString != null && !"".equals(cookieString))
+                for (String cookieString : cookieStrings)
                 {
-                    cookies.add(new Cookie(cookieString));
+                    if (cookieString != null && !"".equals(cookieString))
+                    {
+                        cookies.add(new Cookie(cookieString));
+                    }
                 }
             }
 
